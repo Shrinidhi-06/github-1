@@ -141,6 +141,66 @@ ${message}
               </div>
 
             </div>
+            {/* ================= LOCATION MAP ================= */}
+<div className="mt-16">
+
+  <div className="mb-6">
+    <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-300">
+      Find Us
+    </p>
+
+    <h3 className="mt-2 font-display text-3xl font-black text-ink sm:text-4xl">
+      Visit RS Tourist & Transport
+    </h3>
+
+    <p className="mt-3 max-w-2xl text-sm leading-6 text-white/60 sm:text-base">
+      Kageri, Koni Road, Koteshwar, Udupi, Karnataka – 576222
+    </p>
+  </div>
+
+  <div className="group relative h-[320px] overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl sm:h-[400px]">
+
+    {/* Map */}
+    <iframe
+      src="https://www.google.com/maps?q=Kageri,+Koni+Road,+Koteshwar,+Udupi,+Karnataka+576222&output=embed"
+      width="100%"
+      height="100%"
+      style={{ border: 0 }}
+      loading="lazy"
+      allowFullScreen
+      referrerPolicy="no-referrer-when-downgrade"
+      title="RS Tourist & Transport Location"
+      className="h-full w-full grayscale-[15%] transition duration-700 group-hover:grayscale-0"
+    />
+
+    {/* Map label */}
+    <div className="pointer-events-none absolute bottom-4 left-4 rounded-xl border border-white/20 bg-blue-950/90 px-4 py-3 shadow-lg backdrop-blur-md">
+      <p className="text-xs font-bold uppercase tracking-wider text-orange-300">
+        RS Tourist & Transport
+      </p>
+
+      <p className="mt-1 text-xs text-white/70">
+        Kageri, Koni Road, Koteshwar
+      </p>
+    </div>
+
+  </div>
+
+</div>
+<div className="mt-5 flex justify-end">
+  <a
+    href="https://www.google.com/maps/search/?api=1&query=Kageri%2C+Koni+Road%2C+Koteshwar%2C+Udupi%2C+Karnataka+576222"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group inline-flex items-center gap-3 rounded-full bg-orange-500 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl"
+  >
+    Get Directions
+
+    <span className="transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  </a>
+</div>
 
             {/* WhatsApp Prompt */}
             <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-5">
