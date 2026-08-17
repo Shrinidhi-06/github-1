@@ -1,28 +1,48 @@
 import Navbar from "@/components/Navbar";
-import Hero from "../components/Hero";
+import Hero from "@/components/Hero";
 import About from "@/components/About";
-import Services from "../components/Services";
-import Packages from "@/components/Packages";
-import Gallery from "@/components/Gallery";
+import Services from "@/components/Services";
+
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 
 export default function Home() {
   return (
-    <main>
+    <main className="overflow-hidden">
       <Navbar />
+
+      {/* HERO */}
       <Hero />
+
+      {/* ABOUT */}
       <section id="about">
-        <About />
+        <Reveal>
+          <About />
+        </Reveal>
       </section>
+
+      {/* SERVICES */}
       <section id="services">
-      <Services />
+        <Reveal>
+          <Services />
+        </Reveal>
       </section>
-      <section id="packages">
-      <Packages />
+
+      {/* PACKAGES */}
+      
+
+      {/* GALLERY */}
+     
+
+      {/* CONTACT */}
+      <section id="contact">
+        <Reveal>
+          <Contact />
+        </Reveal>
       </section>
-      <Gallery />
-      <Contact />
+
+      {/* FOOTER */}
       <Footer />
     </main>
   );
