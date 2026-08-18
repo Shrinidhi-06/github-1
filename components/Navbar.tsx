@@ -54,11 +54,11 @@ export default function Navbar() {
           </a>
 
           <a
-            href="#packages"
-            className="relative font-medium text-white/90 transition hover:text-orange-400"
-          >
-            Packages
-          </a>
+  href="#tour-packages"
+  className="relative font-medium text-white/90 transition hover:text-orange-400"
+>
+  Packages
+</a>
 
           <a
             href="#contact"
@@ -118,7 +118,7 @@ export default function Navbar() {
             </a>
 
             <a
-              href="#packages"
+              href="#tour-packages"
               onClick={closeMenu}
               className="rounded-xl px-4 py-3 font-medium transition hover:bg-white/10 hover:text-orange-400"
             >

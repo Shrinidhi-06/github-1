@@ -244,6 +244,7 @@ const services: Service[] = [
 export default function Services() {
   const [openService, setOpenService] = useState<number | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const activeService =
     openService !== null ? services[openService] : null;
@@ -256,21 +257,82 @@ export default function Services() {
   const openServiceView = (index: number) => {
     setOpenService(index);
     setSelectedOption(null);
+    setSelectedItems([]);
+
+    setTimeout(() => {
+      document.getElementById("service-options")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
   };
 
   const closeServiceView = () => {
     setOpenService(null);
     setSelectedOption(null);
+    setSelectedItems([]);
   };
 
   const openOption = (index: number) => {
     setSelectedOption(index);
+    setSelectedItems([]);
+
+    setTimeout(() => {
+      document.getElementById("service-details")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
   };
 
-  const goBack = () => {
+  const goBackToOptions = () => {
     setSelectedOption(null);
+    setSelectedItems([]);
+
+    setTimeout(() => {
+      document.getElementById("service-options")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
   };
 
+  const toggleItem = (item: string) => {
+    setSelectedItems((previous) =>
+      previous.includes(item)
+        ? previous.filter((selected) => selected !== item)
+        : [...previous, item]
+    );
+  };
+const goToBooking = () => {
+  if (!activeService || !activeOption) return;
+
+  const bookingData = {
+    service: activeService.title,
+    option: activeOption.title,
+    selections:
+      selectedItems.length > 0
+        ? selectedItems
+        : activeOption.items,
+  };
+
+  sessionStorage.setItem(
+    "rsBookingData",
+    JSON.stringify(bookingData)
+  );
+ window.dispatchEvent(new Event("rsBookingUpdated"));
+   window.location.hash = "contact";
+
+  setTimeout(() => {
+    document.getElementById("contact")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 100);
+    
+  
+};
+  
   return (
     <section
       id="services"
@@ -278,12 +340,10 @@ export default function Services() {
     >
       <div className="mx-auto max-w-7xl">
 
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
 
         <div className="max-w-3xl animate-[headerReveal_0.9s_ease-out]">
-
           <div className="flex items-center gap-4">
-
             <span className="text-sm font-bold tracking-[0.25em] text-tile">
               02
             </span>
@@ -293,12 +353,10 @@ export default function Services() {
             <span className="text-xs font-bold uppercase tracking-[0.3em] text-ink/50 sm:text-sm">
               What We Offer
             </span>
-
           </div>
 
           <h2 className="mt-8 font-display text-5xl font-black leading-[0.95] tracking-[-0.04em] text-ink sm:text-6xl lg:text-7xl">
             Travel made
-
             <span className="block italic text-tile transition-transform duration-500 hover:translate-x-3">
               simple.
             </span>
@@ -309,344 +367,303 @@ export default function Services() {
             Transport provides comfortable and reliable solutions for every
             kind of journey.
           </p>
-
         </div>
 
-        {/* ================= SERVICE GRID ================= */}
+        {/* SERVICE GRID */}
 
         <div className="mt-16 grid gap-6 md:grid-cols-2">
-
           {services.map((service, index) => {
-
             const isOpen = openService === index;
 
             return (
               <div
-                key={service.number}
-                className={`service-card group relative overflow-hidden rounded-[2rem] bg-ink transition-all duration-700 ${
-                  isOpen
-                    ? "min-h-[620px]"
-                    : "h-[430px]"
-                }`}
+  id={index === 0 ? "tour-packages" : undefined}
+  key={service.number}
+  className="service-card group relative h-[430px] overflow-hidden rounded-[2rem] bg-ink"
                 style={{
                   animationDelay: `${index * 150}ms`,
                 }}
               >
-
-                {/* ================================================= */}
-                {/* NORMAL SERVICE CARD */}
-                {/* ================================================= */}
-
-                {!isOpen && (
-                  <>
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      width={1200}
-                      height={800}
-                      sizes="(max-width: 767px) 100vw, 50vw"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent transition-all duration-700 group-hover:via-black/30" />
-
-                    {/* Number */}
-
-                    <div className="absolute right-6 top-6 text-6xl font-black leading-none text-white/20 transition-all duration-700 group-hover:-translate-y-2 group-hover:text-white/30">
-                      {service.number}
-                    </div>
-
-                    {/* Content */}
-
-                    <div className="absolute inset-x-0 bottom-0 p-7 sm:p-9">
-
-                      <p className="mb-3 translate-y-3 text-xs font-bold uppercase tracking-[0.25em] text-orange-300 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                        RS Tourist
-                      </p>
-
-                      <h3 className="font-display text-3xl font-black leading-tight text-white transition-transform duration-500 group-hover:-translate-y-1 sm:text-4xl">
-                        {service.title}
-                      </h3>
-
-                      <p className="mt-3 max-w-md text-sm leading-6 text-white/80 sm:text-base">
-                        {service.description}
-                      </p>
-
-                      {/* Explore Button */}
-
-                      <button
-                        type="button"
-                        onClick={() => openServiceView(index)}
-                        className="mt-5 inline-flex items-center gap-3 font-bold text-white transition-all duration-300"
-                      >
-
-                        <span className="border-b border-orange-300 pb-1">
-                          Explore
-                        </span>
-
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 transition-all duration-500 group-hover:translate-x-2 group-hover:bg-white group-hover:text-black">
-                          →
-                        </span>
-
-                      </button>
-
-                    </div>
-                  </>
-                )}
-
-                {/* ================================================= */}
-                {/* OPTIONS VIEW */}
-                {/* ================================================= */}
-
-                {isOpen && activeOption === null && (
-                  <div className="absolute inset-0 overflow-hidden bg-blue-950">
-
-                    {/* Background */}
-
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      fill
-                      sizes="(max-width: 767px) 100vw, 50vw"
-                      className="object-cover opacity-20 transition-transform duration-[1500ms] scale-105"
-                    />
-
-                    <div className="absolute inset-0 bg-blue-950/90" />
-
-                    <div className="relative z-10 h-full p-6 sm:p-8">
-
-                      {/* Top */}
-
-                      <div className="flex items-start justify-between">
-
-                        <div className="animate-[contentReveal_0.6s_ease-out]">
-
-                          <p className="text-xs font-bold uppercase tracking-[0.25em] text-orange-300">
-                            RS Tourist
-                          </p>
-
-                          <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-                            {service.title}
-                          </h3>
-
-                          <p className="mt-2 max-w-md text-sm leading-6 text-white/70">
-                            Choose an option below and discover how we can
-                            make your journey easier.
-                          </p>
-
-                        </div>
-
-                        {/* Close */}
-
-                        <button
-                          type="button"
-                          onClick={closeServiceView}
-                          aria-label="Close"
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/30 text-xl text-white transition-all duration-500 hover:rotate-90 hover:bg-white hover:text-black"
-                        >
-                          ×
-                        </button>
-
-                      </div>
-
-                      {/* Options */}
-
-                      <div className="mt-7 grid grid-cols-2 gap-3">
-
-                        {service.options.map((option, optionIndex) => (
-
-                          <button
-                            key={option.title}
-                            type="button"
-                            onClick={() => openOption(optionIndex)}
-                            className="option-card group relative h-[175px] overflow-hidden rounded-2xl text-left opacity-0 animate-[optionReveal_0.7s_ease-out_forwards] sm:h-[190px]"
-                            style={{
-                              animationDelay: `${200 + optionIndex * 120}ms`,
-                            }}
-                          >
-
-                            <Image
-                              src={option.image}
-                              alt={option.title}
-                              fill
-                              sizes="(max-width: 767px) 50vw, 25vw"
-                              className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-                            />
-
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent transition-all duration-700 group-hover:via-black/50" />
-
-                            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-
-                              <h4 className="text-sm font-black text-white sm:text-base">
-                                {option.title}
-                              </h4>
-
-                              <div className="mt-1 flex items-center gap-2 text-xs font-bold text-orange-300">
-
-                                <span>
-                                  Explore
-                                </span>
-
-                                <span className="transition-transform duration-300 group-hover:translate-x-2">
-                                  →
-                                </span>
-
-                              </div>
-
-                            </div>
-
-                          </button>
-
-                        ))}
-
-                      </div>
-
-                    </div>
-
-                  </div>
-                )}
-
-                {/* ================================================= */}
-                {/* DETAIL VIEW */}
-                {/* ================================================= */}
-
-                {isOpen && activeOption && (
-                  <div className="absolute inset-0 overflow-hidden bg-blue-950">
-
-                    {/* Background Image */}
-
-                    <Image
-                      src={activeOption.image}
-                      alt={activeOption.title}
-                      fill
-                      sizes="(max-width: 767px) 100vw, 50vw"
-                      className="object-cover opacity-30 scale-105 transition-transform duration-[1500ms]"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-blue-950/85 to-blue-950/95" />
-
-                    {/* Content */}
-
-                    <div className="relative z-10 flex h-full flex-col p-6 sm:p-8">
-
-                      {/* Navigation */}
-
-                      <div className="flex items-center justify-between">
-
-                        <button
-                          type="button"
-                          onClick={goBack}
-                          className="group flex items-center gap-2 text-sm font-bold text-white/80 transition-colors hover:text-white"
-                        >
-
-                          <span className="transition-transform duration-300 group-hover:-translate-x-1">
-                            ←
-                          </span>
-
-                          Back
-
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={closeServiceView}
-                          aria-label="Close"
-                          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-xl text-white transition-all duration-500 hover:rotate-90 hover:bg-white hover:text-black"
-                        >
-                          ×
-                        </button>
-
-                      </div>
-
-                      {/* Details */}
-
-                      <div className="mt-auto animate-[detailReveal_0.7s_ease-out]">
-
-                        <p className="text-xs font-bold uppercase tracking-[0.25em] text-orange-300">
-                          {service.title}
-                        </p>
-
-                        <h3 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-                          {activeOption.title}
-                        </h3>
-
-                        <p className="mt-3 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
-                          {activeOption.description}
-                        </p>
-
-                        {/* Features */}
-
-                        <div className="mt-5 grid grid-cols-2 gap-2">
-
-                          {activeOption.items.map((item) => (
-
-                            <div
-                              key={item}
-                              className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-xs font-bold text-white backdrop-blur-sm sm:text-sm"
-                            >
-                              {item}
-                            </div>
-
-                          ))}
-
-                        </div>
-
-                        {/* CTA */}
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const message = encodeURIComponent(
-                              `Hello RS Tourist & Transport, I am interested in ${activeOption.title} under ${service.title}. I would like to know more about the available options.`
-                            );
-
-                            window.open(
-                              `https://wa.me/?text=${message}`,
-                              "_blank"
-                            );
-                          }}
-                          className="mt-6 inline-flex items-center gap-3 rounded-full bg-orange-300 px-5 py-3 text-sm font-black text-blue-950 transition-all duration-300 hover:gap-5 hover:bg-white"
-                        >
-
-                          Plan This Trip
-
-                          <span>
-                            →
-                          </span>
-
-                        </button>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-                )}
-
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  sizes="(max-width: 767px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                  priority={index === 0}
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent transition-all duration-700 group-hover:via-black/30" />
+
+                <div className="absolute right-6 top-6 text-6xl font-black leading-none text-white/20 transition-all duration-700 group-hover:-translate-y-2 group-hover:text-white/30">
+                  {service.number}
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 p-7 sm:p-9">
+                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-orange-300">
+                    RS Tourist
+                  </p>
+
+                  <h3 className="font-display text-3xl font-black leading-tight text-white sm:text-4xl">
+                    {service.title}
+                  </h3>
+
+                  <p className="mt-3 max-w-md text-sm leading-6 text-white/80 sm:text-base">
+                    {service.description}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => openServiceView(index)}
+                    className="mt-5 inline-flex items-center gap-3 font-bold text-white transition-all duration-300 hover:gap-5"
+                  >
+                    <span className="border-b border-orange-300 pb-1">
+                      {isOpen ? "Viewing Options" : "Explore"}
+                    </span>
+
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 transition-all duration-300 group-hover:bg-white group-hover:text-black">
+                      {isOpen ? "↓" : "→"}
+                    </span>
+                  </button>
+                </div>
               </div>
             );
           })}
-
         </div>
 
-        {/* ================= BOTTOM STATEMENT ================= */}
+        {/* SERVICE OPTIONS */}
+
+        {activeService && selectedOption === null && (
+          <div
+            id="service-options"
+            className="mt-10 animate-[panelReveal_0.6s_ease-out]"
+          >
+            <div className="overflow-hidden rounded-[2rem] bg-blue-950 shadow-2xl">
+
+              <div className="relative overflow-hidden px-6 py-8 sm:px-10 sm:py-10">
+                <Image
+                  src={activeService.image}
+                  alt=""
+                  fill
+                  sizes="100vw"
+                  className="object-cover opacity-15"
+                />
+
+                <div className="absolute inset-0 bg-blue-950/90" />
+
+                <div className="relative z-10 flex items-start justify-between gap-6">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-300">
+                      {activeService.number} / RS Tourist
+                    </p>
+
+                    <h3 className="mt-3 text-3xl font-black text-white sm:text-5xl">
+                      {activeService.title}
+                    </h3>
+
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65 sm:text-base">
+                      Choose an option and explore the details available
+                      for your journey.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={closeServiceView}
+                    aria-label="Close service options"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 text-xl text-white transition-all duration-300 hover:rotate-90 hover:bg-white hover:text-blue-950"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-8 lg:grid-cols-4">
+                {activeService.options.map((option, index) => (
+                  <button
+                    key={option.title}
+                    type="button"
+                    onClick={() => openOption(index)}
+                    className="option-card group relative h-[250px] overflow-hidden rounded-2xl text-left"
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                    }}
+                  >
+                    <Image
+                      src={option.image}
+                      alt={option.title}
+                      fill
+                      sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+
+                    <div className="absolute inset-x-0 bottom-0 p-5">
+                      <h4 className="text-xl font-black text-white">
+                        {option.title}
+                      </h4>
+
+                      <div className="mt-2 flex items-center gap-2 text-sm font-bold text-orange-300">
+                        <span>View Details</span>
+                        <span className="transition-transform duration-300 group-hover:translate-x-2">
+                          →
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SELECTED OPTION */}
+
+        {activeService && activeOption && (
+          <div
+            id="service-details"
+            className="mt-10 animate-[detailReveal_0.7s_ease-out]"
+          >
+            <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] bg-blue-950 shadow-2xl">
+
+              <Image
+                src={activeOption.image}
+                alt=""
+                fill
+                sizes="100vw"
+                className="scale-105 object-cover opacity-25"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/90 to-blue-950/55" />
+
+              <div className="relative z-10 flex min-h-[520px] flex-col justify-between p-6 sm:p-10 lg:p-14">
+
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={goBackToOptions}
+                    className="group flex items-center gap-2 text-sm font-bold text-white/75 transition-colors hover:text-white"
+                  >
+                    <span className="transition-transform duration-300 group-hover:-translate-x-1">
+                      ←
+                    </span>
+                    Back to options
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={closeServiceView}
+                    aria-label="Close"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-xl text-white transition-all duration-300 hover:rotate-90 hover:bg-white hover:text-blue-950"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="mt-16 max-w-3xl">
+
+                  <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-300">
+                    {activeService.title}
+                  </p>
+
+                  <h3 className="mt-3 font-display text-4xl font-black text-white sm:text-5xl lg:text-6xl">
+                    {activeOption.title}
+                  </h3>
+
+                  <p className="mt-5 max-w-2xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">
+                    {activeOption.description}
+                  </p>
+
+                  {/* SELECTABLE OPTIONS */}
+
+                  <div className="mt-7">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+                      Select what you need
+                    </p>
+
+                    <div className="grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+                      {activeOption.items.map((item) => {
+                        const isSelected = selectedItems.includes(item);
+
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => toggleItem(item)}
+                            className={`rounded-xl border px-3 py-3 text-center text-xs font-bold backdrop-blur-md transition-all duration-300 sm:text-sm ${
+                              isSelected
+                                ? "scale-[1.03] border-orange-400 bg-orange-400 text-blue-950 shadow-lg"
+                                : "border-white/15 bg-white/10 text-white hover:bg-white/20"
+                            }`}
+                          >
+                            {isSelected && (
+                              <span className="mr-1">✓</span>
+                            )}
+                            {item}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {selectedItems.length > 0 && (
+                      <p className="mt-3 text-sm text-orange-300">
+                        Selected: {selectedItems.join(", ")}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* PRICE */}
+
+                  <div className="mt-7">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">
+                      Pricing
+                    </p>
+
+                    <p className="mt-1 text-sm text-white/70">
+                      Contact us for a personalized quote based on your
+                      destination, vehicle and travel requirements.
+                    </p>
+                  </div>
+
+                  {/* CTA */}
+
+                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                    <button
+                      type="button"
+                      onClick={goToBooking}
+                      className="inline-flex items-center justify-center gap-3 rounded-full bg-orange-400 px-7 py-3.5 text-sm font-black text-blue-950 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-xl"
+                    >
+                      Plan This Trip
+                      <span>→</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={goBackToOptions}
+                      className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-blue-950"
+                    >
+                      Choose Another Option
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* BOTTOM */}
 
         <div className="mt-16 border-t border-sand-dark pt-8">
-
           <p className="max-w-5xl text-sm leading-6 text-ink/50 transition duration-500 hover:text-ink/70 sm:text-base">
             Whether you're planning a holiday, travelling locally, or looking
             for dependable goods transportation, we're here to make the journey
             easier.
           </p>
-
         </div>
-
       </div>
 
-      {/* ================= ANIMATIONS ================= */}
-
       <style jsx>{`
-
         @keyframes headerReveal {
           from {
             opacity: 0;
@@ -671,31 +688,7 @@ export default function Services() {
           }
         }
 
-        @keyframes optionReveal {
-          from {
-            opacity: 0;
-            transform: translateY(25px) scale(0.94);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        @keyframes contentReveal {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes detailReveal {
+        @keyframes panelReveal {
           from {
             opacity: 0;
             transform: translateY(30px);
@@ -707,24 +700,60 @@ export default function Services() {
           }
         }
 
+        @keyframes optionReveal {
+          from {
+            opacity: 0;
+            transform: translateY(25px) scale(0.96);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes detailReveal {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
         .service-card {
           opacity: 0;
           animation: serviceReveal 0.9s ease-out forwards;
         }
 
         .option-card {
+          opacity: 0;
+          animation: optionReveal 0.7s ease-out forwards;
           transition:
             transform 0.5s ease,
             box-shadow 0.5s ease;
         }
 
         .option-card:hover {
-          transform: translateY(-6px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
         }
 
-      `}</style>
+        @media (prefers-reduced-motion: reduce) {
+          .service-card,
+          .option-card {
+            animation: none;
+            opacity: 1;
+          }
 
+          .option-card {
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
